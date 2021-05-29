@@ -23,7 +23,7 @@
 
     <?php
 
-        if($_SESSION["logginOk"] == "Y"){
+        if($_SESSION["logginnOk"] == "Y"){
             header("refresh:0.1; url=record.php");
         }
 
@@ -40,7 +40,7 @@
             if($username == "Thomastj"){
                 if ($password == $real_password) {
 
-                    $_SESSION["logginOk"] = "Y";
+                    $_SESSION["logginnOk"] = "Y";
 
                     header("refresh:0.0; url=record.php");
                     exit;
