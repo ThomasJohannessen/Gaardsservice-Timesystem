@@ -14,6 +14,20 @@
             }
             }
     </script>
+
+    <style>
+    table {
+    font-family: arial, sans-serif;
+    border-collapse: collapse;
+    width: 100%;
+    }
+
+    td, th {
+    border: 1px solid #dddddd;
+    text-align: left;
+    padding: 8px;
+    }
+    </style>
 </head>
 <body>
     <h1> Nytt arbeid: </h1>
@@ -45,6 +59,13 @@
     </form> 
 
     <?php
+
+    session_start();
+
+    if($_SESSION["logginOk"] != "Y"){
+        header("refresh:0.0; url=index.php");
+    }
+
     include "database.php";
 
         $db = new Database();
@@ -73,7 +94,7 @@
                 
                 echo("Arbeid lagt til.");
 
-                header("refresh:3.0; url=record.php");
+                header("refresh:1.0; url=record.php");
                 exit;
             }
         ?>
@@ -91,11 +112,39 @@
         $sql = "SELECT * FROM `arbeidsoppforinger`";
 
         $result = $conn->query($sql);
-        
+    ?>    
+    <table>
+        <tr>
+            <th>Dato:</th>
+            <th>Gjort:</th>
+            <th>Hvor:</th>
+            <th>Starttid:</th>
+            <th>Sluttid:</th>
+            <th>Varighet:</th>
+            <th>Overtid?</th>
+            <th>Kommentar:</th>
+        </tr>
+
+        <?php 
 
         if ($result->num_rows > 0) {
             while($row = $result->fetch_assoc()) {
-                echo " Gjort: " . $row["Gjort"]. " - Hvor: " . $row["Hvor"]. " - Starttid: " . $row["Starttid"]. " - Sluttid: " . $row["Sluttid"] . " - Dato: " . $row["Dato"].  " - Overtid: " . $row["Overtid?"]. " - Kommentar: ". $row["Kommentar"]. "<br>";
+
+                $start_t = new DateTime($row['Starttid']);
+                $current_t = new DateTime($row['Sluttid']);
+                $difference = $start_t ->diff($current_t );
+                $return_time = $difference ->format('%H:%I');
+
+                echo "<tr>";
+                    echo "<td>" . $row['Dato'] . "</td>";    
+                    echo "<td>" . $row['Gjort'] . "</td>";
+                    echo "<td>" . $row['Hvor'] . "</td>";
+                    echo "<td>" . substr($row['Starttid'],0,-10) . "</td>";
+                    echo "<td>" . substr($row['Sluttid'],0,-10) . "</td>";
+                    echo "<td>" . ($return_time) . "</td>";
+                    echo "<td>" . $row['Overtid?'] . "</td>";
+                    echo "<td>" . $row['Kommentar'] . "</td>";
+                echo "</tr>";  
             } 
         }
         else {
@@ -103,6 +152,7 @@
         }
         $conn->close();
     ?>
+    <table>
     </div>
 </body>
 </html>
