@@ -62,7 +62,7 @@
 
     session_start();
 
-    if($_SESSION["logginOk"] != "Y"){
+    if($_SESSION["logginnOk"] != "Y"){
         header("refresh:0.0; url=index.php");
     }
 
