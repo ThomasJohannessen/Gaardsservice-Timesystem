@@ -4,17 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Arbeidsrapport</title>
-    <script>
-        function showHideHistory() {
-            var x = document.getElementById("historikk");
-            if (x.style.display === "none") {
-                x.style.display = "block";
-            } else {
-                x.style.display = "none";
-            }
-            }
-    </script>
-
+ 
     <style>
     table {
     font-family: arial, sans-serif;
@@ -30,37 +20,25 @@
     </style>
 </head>
 <body>
-    
+    <h1> Generer skjematisk rapport: </h1>
+
+    <form method="POST">
+        <label for="fromdate">Fra dato:</label>
+        <input type="date" id="fromdate" name="fromdate" value="<?php echo date('Y-m-d', strtotime(date('Y-m-d'). ' - 14 days')); ?>" required>
+        
+        <label for="todate">Til dato:</label>
+        <input type="date" id="todate" name="todate" value="<?php echo date('Y-m-d'); ?>" required>
+
+        <input type="submit" id="velgBtn" value="Vis arbeid" name="velgBtn">
+    </form>
 
     <?php
+        $fraDato = $_POST['fromdate'];
+        $tilDato = $_POST['todate'];
 
-    session_start();
-
-    if($_SESSION["logginnOk"] != "Y"){
-        header("refresh:0.0; url=index.php");
-    }
-
-    include "database.php";
-
-        $db = new Database();
-        $conn = $db->get_Connection();
-
-        ?>
-
-    <br>
-    <h1> Arbeidet: </h1>
-    <button onclick="showHideHistory()">Vis historikk</button>
-
-    <div id="historikk" style="display:none">
-    <?php
-
-        $db = new Database();
-        $conn = $db->get_Connection();
-
-        $sql = "SELECT * FROM `arbeidsoppforinger` ORDER BY `arbeidsoppforinger`.`Arbeidsid` ASC";
-
-        $result = $conn->query($sql);
-    ?>    
+        echo "<h2> Arbeidet fra: {$fraDato} til {$tilDato} </h3>";
+    ?>
+     
     <table>
         <tr>
             <th>Dato:</th>
@@ -73,7 +51,28 @@
             <th>Timer 100%</th>
         </tr>
 
-        <?php 
+    <?php 
+
+    session_start();
+
+    if($_SESSION["logginnOk"] != "Y"){
+        header("refresh:0.0; url=index.php");
+    }
+
+    include "database.php";
+
+    $db = new Database();
+    $conn = $db->get_Connection();
+
+    if (isset($_POST['velgBtn'])){  
+
+        $fraDato = $_POST['fromdate'];
+        $tilDato = $_POST['todate'];
+
+        $sql = "SELECT * FROM `arbeidsoppforinger` WHERE Dato between '$fraDato' and '$tilDato' ORDER BY `arbeidsoppforinger`.`Arbeidsid` ASC";
+        
+        $result = $conn->query($sql);
+        
 
         $totNorTimer = 0;
         $tot50Timer = 0;
@@ -142,11 +141,12 @@
                 echo "</tr>";  
         }
         else {
-            echo "0 results";
+            echo "";
         }
-        $conn->close();
+    }
+    $conn->close();
     ?>
-    <table>
+    </table>
     </div>
 </body>
 </html>
