@@ -127,7 +127,7 @@
         $db = new Database();
         $conn = $db->get_Connection();
 
-        $sql = "SELECT * FROM `arbeidsoppforinger` ORDER BY `arbeidsoppforinger`.`Arbeidsid` ASC";
+        $sql = "SELECT * FROM `arbeidsoppforinger` ORDER BY `arbeidsoppforinger`.`Arbeidsid` DESC";
 
         $result = $conn->query($sql);
     ?>    
